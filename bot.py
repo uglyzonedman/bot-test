@@ -1,26 +1,32 @@
 from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher
+from aiogram.fsm import Router
 from aiogram.utils import executor
 
-
+# Initialize bot and router
 bot = Bot(token="6772658669:AAFkfqaDMZL1LBBjMg8-9kXtAQaGIFVMYgs")
-dp = Dispatcher(bot)
+router = Router()
 
 
-@dp.message_handler(commands=["start"])
+# Define handlers
+@router.message(commands=["start"])
 async def process_start_command(message: types.Message):
     await message.reply("Привет!\nНапиши мне что-нибудь!")
 
 
-@dp.message_handler(commands=["help"])
+@router.message(commands=["help"])
 async def process_help_command(message: types.Message):
-    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!")
+    await message.reply("Напиши мне что-нибудь, и я отправлю этот текст тебе в ответ!")
 
 
-@dp.message_handler()
-async def echo_message(msg: types.Message):
-    await bot.send_message(msg.from_user.id, msg.text)
+@router.message()
+async def echo_message(message: types.Message):
+    await bot.send_message(message.from_user.id, message.text)
 
 
+# Setup executor
 if __name__ == "__main__":
+    from aiogram import Dispatcher
+
+    dp = Dispatcher()
+    dp.include_router(router)
     executor.start_polling(dp)
