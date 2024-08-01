@@ -28,7 +28,7 @@ dp = Dispatcher()
 
 @dp.message(F.text == "/start")
 async def start(message: Message):
-    result = requests.get("https://192.168.25.19:7777/api-v2/roles/all")
+    result = requests.get("https://192.168.25.19:7777/api-v2/roles/all", verify=False)
     print(result)
     await message.answer("tst")
 
