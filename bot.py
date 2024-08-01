@@ -1,13 +1,26 @@
 import asyncio
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
-from aiohttp import ClientSession, TCPConnector
+from aiohttp import ClientSession, ClientTimeout, TCPConnector
 
-# Настройка клиента aiohttp с отключенным SSL
-connector = TCPConnector(ssl=False)
-session = ClientSession(connector=connector)
 
-bot = Bot(token="6772658669:AAFkfqaDMZL1LBBjMg8-9kXtAQaGIFVMYgs", session=CustomSession)
+class CustomAiohttpSession(AiohttpSession):
+    async def create_session(self):
+        connector = TCPConnector(
+            ssl=False,
+        )
+        timeout = ClientTimeout(total=60)
+        return ClientSession(
+            connector=connector,
+            timeout=timeout,
+        )
+
+
+session = CustomAiohttpSession()
+
+
+bot = Bot(token="6772658669:AAFkfqaDMZL1LBBjMg8-9kXtAQaGIFVMYgs", session=session)
+
 dp = Dispatcher()
 
 
@@ -17,11 +30,8 @@ async def start(message: Message):
 
 
 async def main():
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-        await dp.start_polling(bot)
-    except Exception as e:
-        print(f"Error: {e}")
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
