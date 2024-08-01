@@ -3,6 +3,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiogram.client.session.aiohttp import AiohttpSession
+import requests
 
 
 class CustomAiohttpSession(AiohttpSession):
@@ -27,6 +28,8 @@ dp = Dispatcher()
 
 @dp.message(F.text == "/start")
 async def start(message: Message):
+    result = requests.get("https://192.168.25.19:7777/api-v2/roles/all")
+    print(result)
     await message.answer("tst")
 
 
